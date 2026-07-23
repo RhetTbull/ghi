@@ -21,8 +21,8 @@ from textual.widgets import (
     TextArea,
 )
 
-from ghhi.api import GitHubAPI, GitHubError
-from ghhi.dialogs import (
+from ghi.api import GitHubAPI, GitHubError
+from ghi.dialogs import (
     CommentDialog,
     ConnectionDialog,
     ConnectionForm,
@@ -31,8 +31,8 @@ from ghhi.dialogs import (
     IssueForm,
     LabelsDialog,
 )
-from ghhi.models import Comment, Issue
-from ghhi.repository import RepositoryError, normalize_repo
+from ghi.models import Comment, Issue
+from ghi.repository import RepositoryError, normalize_repo
 
 
 class IssueItem(ListItem):
@@ -50,8 +50,8 @@ class IssueItem(ListItem):
 
 
 class IssueApp(App[None]):
-    TITLE = "ghhi"
-    CSS_PATH = "ghhi.tcss"
+    TITLE = "ghi"
+    CSS_PATH = "ghi.tcss"
     ENABLE_COMMAND_PALETTE = False
 
     BINDINGS: ClassVar[list[Binding]] = [

@@ -61,4 +61,3 @@ class Issue:
             updated_at=data.get("updated_at", ""),
             html_url=data.get("html_url", ""),
         )
-

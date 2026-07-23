@@ -5,7 +5,7 @@ import json
 import httpx
 import pytest
 
-from ghhi.api import GitHubAPI, GitHubError
+from ghi.api import GitHubAPI, GitHubError
 
 
 def issue(number: int = 1, **updates: object) -> dict[str, object]:
@@ -87,4 +87,3 @@ async def test_api_errors_are_user_presentable() -> None:
             await api.list_issues()
     finally:
         await api.close()
-

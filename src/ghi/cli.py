@@ -4,14 +4,14 @@ import argparse
 import os
 from pathlib import Path
 
-from ghhi import __version__
-from ghhi.app import IssueApp
-from ghhi.repository import RepositoryError, discover_repo, normalize_repo
+from ghi import __version__
+from ghi.app import IssueApp
+from ghi.repository import RepositoryError, discover_repo, normalize_repo
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="ghhi", description="A fast, lightweight GitHub issue TUI"
+        prog="ghi", description="A fast, lightweight GitHub issue TUI"
     )
     parser.add_argument(
         "repo",
@@ -38,4 +38,3 @@ def main(argv: list[str] | None = None) -> None:
         parser.error(str(error))
     token = args.token if args.token is not None else os.getenv("GITHUB_ISSUE_ACCESS_TOKEN", "")
     IssueApp(repo, token).run()
-

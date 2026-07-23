@@ -1,6 +1,6 @@
-# ghhi
+# ghi
 
-`ghhi` is a fast, lightweight terminal UI for using GitHub Issues as a development todo
+`ghi` is a fast, lightweight terminal UI for using GitHub Issues as a development todo
 list. It opens the repository connected to the current checkout by default and keeps the
 common workflow on a single screen.
 
@@ -11,14 +11,14 @@ This project uses [uv](https://docs.astral.sh/uv/):
 ```console
 uv sync
 export GITHUB_ISSUE_ACCESS_TOKEN=github_pat_...
-uv run ghhi
+uv run ghi
 ```
 
 If the current directory does not have a GitHub `origin`, or you want another repository:
 
 ```console
-uv run ghhi owner/repo
-uv run ghhi https://github.com/owner/repo
+uv run ghi owner/repo
+uv run ghi https://github.com/owner/repo
 ```
 
 The token may also be passed with `--token` or entered at runtime with `t`. Runtime tokens

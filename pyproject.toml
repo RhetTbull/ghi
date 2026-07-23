@@ -1,5 +1,5 @@
 [project]
-name = "ghhi"
+name = "ghi"
 version = "0.1.0"
 description = "A fast, lightweight GitHub issue TUI"
 readme = "README.md"
@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-ghhi = "ghhi.cli:main"
+ghi = "ghi.cli:main"
 
 [dependency-groups]
 dev = [
@@ -31,4 +31,3 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-

@@ -1,6 +1,6 @@
 import pytest
 
-from ghhi.repository import RepositoryError, normalize_repo
+from ghi.repository import RepositoryError, normalize_repo
 
 
 @pytest.mark.parametrize(
@@ -21,4 +21,3 @@ def test_normalize_repo(value: str, expected: str) -> None:
 def test_normalize_repo_rejects_invalid_values(value: str) -> None:
     with pytest.raises(RepositoryError):
         normalize_repo(value)
-

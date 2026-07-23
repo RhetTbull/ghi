@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from textual.color import Color
 
-from ghhi.app import IssueApp, IssueItem
-from ghhi.models import Comment, Issue, Label
+from ghi.app import IssueApp, IssueItem
+from ghi.models import Comment, Issue, Label
 
 
 class FakeAPI:

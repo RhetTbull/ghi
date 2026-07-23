@@ -5,7 +5,7 @@ from typing import Any, Self
 
 import httpx
 
-from ghhi.models import Comment, Issue, Label
+from ghi.models import Comment, Issue, Label
 
 
 class GitHubError(RuntimeError):
@@ -27,7 +27,7 @@ class GitHubAPI:
         headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": self.API_VERSION,
-            "User-Agent": "ghhi",
+            "User-Agent": "ghi",
         }
         if token:
             headers["Authorization"] = f"Bearer {token}"
