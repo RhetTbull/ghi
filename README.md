@@ -4,6 +4,8 @@
 list. It opens the repository connected to the current checkout by default and keeps the
 common workflow on a single screen.
 
+![ghi terminal interface showing an issue list and issue details](screenshot.png)
+
 ## Install and run
 
 This project uses [uv](https://docs.astral.sh/uv/):
