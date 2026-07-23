@@ -26,6 +26,12 @@ are held in memory only. For private repositories and write actions, use a fine-
 personal access token with repository **Issues: read and write** permission. Public issues
 can be viewed without a token, subject to GitHub's unauthenticated rate limit.
 
+To install from Github:
+
+```bash
+uv tool install 'git+https://github.com/RhetTbull/ghi.git'
+```
+
 ## Keys
 
 | Key | Action |
