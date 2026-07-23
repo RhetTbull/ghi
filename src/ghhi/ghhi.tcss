@@ -1,0 +1,156 @@
+$accent: #58a6ff;
+$surface: #161b22;
+$muted: #8b949e;
+
+Screen {
+    background: #0d1117;
+}
+
+Header {
+    background: #161b22;
+    color: #f0f6fc;
+}
+
+#main {
+    height: 1fr;
+}
+
+#search {
+    display: none;
+    height: 3;
+    border: tall $accent;
+    background: #0d1117;
+}
+
+#panes {
+    height: 1fr;
+}
+
+#issue-pane {
+    width: 38%;
+    min-width: 32;
+    border-right: solid #30363d;
+    background: $surface;
+}
+
+#list-title {
+    height: 2;
+    padding: 0 1;
+    content-align: left middle;
+    color: #f0f6fc;
+    border-bottom: solid #30363d;
+}
+
+#issues {
+    height: 1fr;
+    background: $surface;
+}
+
+#issues:focus {
+    border-left: thick $accent;
+}
+
+IssueItem {
+    height: auto;
+    min-height: 3;
+    padding: 0 1;
+    color: #c9d1d9;
+}
+
+IssueItem:hover {
+    background: #21262d;
+}
+
+IssueItem.-highlight {
+    background: #1f6feb;
+    color: white;
+}
+
+#detail-pane {
+    width: 1fr;
+    padding: 1 2;
+}
+
+#detail-scroll {
+    height: 1fr;
+    scrollbar-color: $accent;
+}
+
+#detail-scroll:focus {
+    border-left: thick $accent;
+}
+
+#detail {
+    height: auto;
+}
+
+Footer {
+    background: #161b22;
+}
+
+Dialog {
+    align: center middle;
+    background: #0008;
+}
+
+.dialog {
+    width: 72;
+    max-width: 92%;
+    height: auto;
+    max-height: 90%;
+    padding: 1 2;
+    border: round $accent;
+    background: $surface;
+}
+
+.dialog-title {
+    height: 2;
+    text-style: bold;
+    color: #f0f6fc;
+}
+
+.issue-dialog {
+    height: 80%;
+}
+
+.issue-dialog TextArea, .comment-dialog TextArea {
+    height: 1fr;
+    min-height: 8;
+    margin: 1 0;
+}
+
+.comment-dialog {
+    height: 60%;
+}
+
+.labels-dialog .label-options {
+    height: auto;
+    max-height: 8;
+    margin: 1 0;
+    color: $muted;
+}
+
+.buttons {
+    width: 100%;
+    height: 3;
+    align-horizontal: right;
+    margin-top: 1;
+}
+
+.buttons Button {
+    margin-left: 1;
+}
+
+.hint {
+    height: 1;
+    color: $muted;
+}
+
+.help-dialog {
+    width: 58;
+}
+
+.help-dialog Static {
+    height: auto;
+    margin-bottom: 1;
+}
