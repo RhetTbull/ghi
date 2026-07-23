@@ -138,7 +138,7 @@ class IssueApp(App[None]):
     def _update_list_title(self, *, loading: bool = False) -> None:
         query = self.query_one("#search", Input).value.strip()
         if loading:
-            count = "… issues"
+            count = "[yellow]loading from GitHub…[/yellow]"
         elif query:
             count = f"{len(self.filtered_issues)} of {len(self.issues)} issues"
         else:
@@ -146,17 +146,21 @@ class IssueApp(App[None]):
         filter_status = f'  [yellow]filter: “{escape(query)}”[/yellow]' if query else ""
         self.query_one("#list-title", Static).update(
             f"[b]{escape(self.repo)}[/b]  [cyan]{self.state_filter}[/cyan]  "
-            f"[dim]{count}[/dim]{filter_status}"
+            f"{count if loading else f'[dim]{count}[/dim]'}{filter_status}"
         )
 
     @work(exclusive=True, group="issues")
     async def load_issues(self) -> None:
         self._update_list_title(loading=True)
+        if not self.issues:
+            self.query_one("#detail", Markdown).update("_Loading issues from GitHub…_")
         try:
             self.issues = await self.api.list_issues(self.state_filter)
         except GitHubError as error:
             self.notify(str(error), title="GitHub error", severity="error", timeout=8)
             self._update_list_title()
+            if not self.issues:
+                self.query_one("#detail", Markdown).update(f"**GitHub error:** {error}")
             return
         self.comments.clear()
         await self._apply_search()

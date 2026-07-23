@@ -72,7 +72,8 @@ class GitHubAPI:
         url: str | None = path
         query = {"per_page": 100, **(params or {})}
         while url:
-            response = await self._request("GET", url, params=query)
+            request_options = {"params": query} if query else {}
+            response = await self._request("GET", url, **request_options)
             for item in response.json():
                 yield item
             url = response.links.get("next", {}).get("url")

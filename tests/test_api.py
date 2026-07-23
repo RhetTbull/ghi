@@ -42,6 +42,38 @@ async def test_list_issues_filters_pull_requests_and_sends_auth() -> None:
 
 
 @pytest.mark.asyncio
+async def test_pagination_preserves_query_from_next_link() -> None:
+    calls = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            next_url = (
+                "https://example.test/repos/acme/widget/issues"
+                "?state=open&per_page=100&page=2&after=cursor"
+            )
+            return httpx.Response(200, json=[issue(1)], headers={"Link": f'<{next_url}>; rel="next"'})
+        assert calls == 2
+        assert request.url.params["state"] == "open"
+        assert request.url.params["per_page"] == "100"
+        assert request.url.params["page"] == "2"
+        assert request.url.params["after"] == "cursor"
+        return httpx.Response(200, json=[issue(2)])
+
+    api = GitHubAPI(
+        "acme/widget", base_url="https://example.test", transport=httpx.MockTransport(handler)
+    )
+    try:
+        issues = await api.list_issues()
+    finally:
+        await api.close()
+
+    assert [item.number for item in issues] == [1, 2]
+    assert calls == 2
+
+
+@pytest.mark.asyncio
 async def test_create_update_comment_and_labels_use_expected_endpoints() -> None:
     seen: list[tuple[str, str, object]] = []
 
