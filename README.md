@@ -55,7 +55,7 @@ uv tool install 'git+https://github.com/RhetTbull/ghi.git'
 | `?` | Built-in help |
 | `q` | Quit |
 
-Use `Ctrl+S` to save an issue editor and `Ctrl+Enter` to post a comment. `Esc` closes a
+Use `Ctrl+Enter` to save an issue editor or post a comment. `Esc` closes a
 dialog or clears search. In search, `Enter` returns focus to the issue list while keeping
 the active filter visible.
 

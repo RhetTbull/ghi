@@ -93,7 +93,7 @@ async def test_creating_issue_updates_list_immediately() -> None:
         await app.workers.wait_for_complete()
         await pilot.press("n")
         await pilot.press(*"A new todo")
-        await pilot.press("ctrl+s")
+        await pilot.press("ctrl+enter")
         await app.workers.wait_for_complete()
         await pilot.pause()
 

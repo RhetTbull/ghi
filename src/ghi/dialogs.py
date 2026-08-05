@@ -36,7 +36,9 @@ class IssueForm:
 
 
 class IssueDialog(Dialog):
-    BINDINGS: ClassVar[list[Binding]] = Dialog.BINDINGS + [Binding("ctrl+s", "save", "Save")]
+    BINDINGS: ClassVar[list[Binding]] = Dialog.BINDINGS + [
+        Binding("ctrl+enter", "save", "Save")
+    ]
 
     def __init__(self, issue: Issue | None = None) -> None:
         super().__init__()
@@ -54,7 +56,7 @@ class IssueDialog(Dialog):
             )
             yield TextArea(self.issue.body if self.issue else "", id="issue-body")
             yield Input(value=labels, placeholder="Labels (comma separated)", id="issue-labels")
-            yield Static("Ctrl+S save  •  Esc cancel", classes="hint")
+            yield Static("Ctrl+Enter save  •  Esc cancel", classes="hint")
             with Horizontal(classes="buttons"):
                 yield Button("Cancel", id="cancel")
                 yield Button("Save", variant="primary", id="save")
