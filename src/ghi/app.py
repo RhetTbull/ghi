@@ -103,6 +103,7 @@ class IssueApp(App[None]):
         self.token = token
         self.api = api or GitHubAPI(repo, token)
         self.state_filter = "open"
+        self.available_labels: list[str] = []
         self.issues: list[Issue] = []
         self.filtered_issues: list[Issue] = []
         self.comments: dict[int, list[Comment]] = {}
@@ -152,6 +153,7 @@ class IssueApp(App[None]):
     @work(exclusive=True, group="issues")
     async def load_issues(self) -> None:
         self._update_list_title(loading=True)
+        self.load_labels()
         if not self.issues:
             self.query_one("#detail", Markdown).update("_Loading issues from GitHub…_")
         try:
@@ -164,6 +166,15 @@ class IssueApp(App[None]):
             return
         self.comments.clear()
         await self._apply_search()
+
+    @work(exclusive=True, group="labels")
+    async def load_labels(self) -> None:
+        """Cache the repository labels used to autocomplete label fields."""
+        try:
+            self.available_labels = [label.name for label in await self.api.list_labels()]
+        except GitHubError:
+            # Completion is a convenience; loading issues reports real trouble.
+            pass
 
     async def _apply_search(self) -> None:
         query = self.query_one("#search", Input).value.strip().casefold()
@@ -294,11 +305,14 @@ class IssueApp(App[None]):
         self.load_issues()
 
     def action_new_issue(self) -> None:
-        self.push_screen(IssueDialog(), self._created_issue)
+        self.push_screen(IssueDialog(available=self.available_labels), self._created_issue)
 
     def action_edit_issue(self) -> None:
         if issue := self.selected_issue:
-            self.push_screen(IssueDialog(issue), lambda form: self._edited_issue(issue, form))
+            self.push_screen(
+                IssueDialog(issue, self.available_labels),
+                lambda form: self._edited_issue(issue, form),
+            )
 
     def action_comment(self) -> None:
         if issue := self.selected_issue:
@@ -309,15 +323,14 @@ class IssueApp(App[None]):
         issue = self.selected_issue
         if not issue:
             return
-        try:
-            available = await self.api.list_labels()
-        except GitHubError as error:
-            self.notify(str(error), severity="error")
-            return
+        if not self.available_labels:
+            try:
+                self.available_labels = [label.name for label in await self.api.list_labels()]
+            except GitHubError as error:
+                self.notify(str(error), severity="error")
+                return
         self.push_screen(
-            LabelsDialog(
-                [label.name for label in issue.labels], [label.name for label in available]
-            ),
+            LabelsDialog([label.name for label in issue.labels], self.available_labels),
             lambda labels: self._set_labels(issue, labels),
         )
 
@@ -428,6 +441,7 @@ class IssueApp(App[None]):
         self.sub_title = self.repo
         self.issues.clear()
         self.filtered_issues.clear()
+        self.available_labels.clear()
         self.load_issues()
 
     def action_help(self) -> None:

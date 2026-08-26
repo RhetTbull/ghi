@@ -59,6 +59,10 @@ Use `Ctrl+Enter` to save an issue editor or post a comment. `Esc` closes a
 dialog or clears search. In search, `Enter` returns focus to the issue list while keeping
 the active filter visible.
 
+Label fields autocomplete against the labels defined in the repository: type `enh` and the
+rest of `enhancement` appears after the cursor, then `Tab` or `Enter` accepts it. Labels are
+comma separated, and each new name is completed independently of the ones already entered.
+
 ## Development
 
 ```console

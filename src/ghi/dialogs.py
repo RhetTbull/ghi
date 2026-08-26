@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import ClassVar
 
+from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Button, Input, Label, Static, TextArea
 
+from ghi.completion import LabelInput, matching_labels
 from ghi.models import Issue
 
 
@@ -17,6 +20,14 @@ class Dialog(ModalScreen[object]):
 
     def action_cancel(self) -> None:
         self.dismiss(None)
+
+    def on_key(self, event: events.Key) -> None:
+        """Send Tab out of a label field to Save; the field itself keeps Tab for
+        completion, so this only runs when there was nothing to complete."""
+        if event.key == "tab" and isinstance(self.focused, LabelInput):
+            self.query_one("#save", Button).focus()
+            event.stop()
+            event.prevent_default()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "cancel":
@@ -40,9 +51,10 @@ class IssueDialog(Dialog):
         Binding("ctrl+enter", "save", "Save")
     ]
 
-    def __init__(self, issue: Issue | None = None) -> None:
+    def __init__(self, issue: Issue | None = None, available: Iterable[str] = ()) -> None:
         super().__init__()
         self.issue = issue
+        self.available = list(available)
 
     def compose(self) -> ComposeResult:
         title = "Edit issue" if self.issue else "New issue"
@@ -55,8 +67,10 @@ class IssueDialog(Dialog):
                 id="issue-title",
             )
             yield TextArea(self.issue.body if self.issue else "", id="issue-body")
-            yield Input(value=labels, placeholder="Labels (comma separated)", id="issue-labels")
-            yield Static("Ctrl+Enter save  •  Esc cancel", classes="hint")
+            yield LabelInput(labels, self.available, id="issue-labels")
+            yield Static(
+                "Tab completes a label  •  Ctrl+Enter save  •  Esc cancel", classes="hint"
+            )
             with Horizontal(classes="buttons"):
                 yield Button("Cancel", id="cancel")
                 yield Button("Save", variant="primary", id="save")
@@ -73,11 +87,7 @@ class IssueDialog(Dialog):
             self.notify("A title is required", severity="warning")
             return
         body = self.query_one("#issue-body", TextArea).text
-        labels = [
-            item.strip()
-            for item in self.query_one("#issue-labels", Input).value.split(",")
-            if item.strip()
-        ]
+        labels = self.query_one("#issue-labels", LabelInput).labels
         self.dismiss(IssueForm(title, body, labels))
 
 
@@ -118,20 +128,29 @@ class LabelsDialog(Dialog):
     def compose(self) -> ComposeResult:
         with Vertical(classes="dialog labels-dialog"):
             yield Label("Set labels", classes="dialog-title")
-            yield Input(value=", ".join(self.current), id="labels-input")
-            yield Static(
-                "Available: " + (", ".join(self.available) or "none"), classes="label-options"
-            )
+            yield LabelInput(", ".join(self.current), self.available, id="labels-input")
+            yield Static(id="label-options", classes="label-options")
+            yield Static("Tab completes a label  •  Esc cancel", classes="hint")
             with Horizontal(classes="buttons"):
                 yield Button("Cancel", id="cancel")
                 yield Button("Apply", variant="primary", id="save")
 
     def on_mount(self) -> None:
-        self.query_one(Input).focus()
+        self._show_options()
+        self.query_one(LabelInput).focus()
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        self._show_options()
+
+    def _show_options(self) -> None:
+        """List the labels that still match what is being typed."""
+        matches = matching_labels(self.query_one(LabelInput).value, self.available)
+        self.query_one("#label-options", Static).update(
+            "Available: " + (", ".join(matches) or "none")
+        )
 
     def save(self) -> None:
-        labels = [item.strip() for item in self.query_one(Input).value.split(",") if item.strip()]
-        self.dismiss(labels)
+        self.dismiss(self.query_one(LabelInput).labels)
 
 
 @dataclass(frozen=True)
@@ -185,6 +204,10 @@ class HelpDialog(Dialog):
   l               Set labels
   x               Close or reopen
   o               Open in browser
+
+[b]Editing[/b]
+  Tab / Enter     Complete a repo label while typing it
+  Ctrl+Enter      Save the issue or post the comment
 
 [b]Connection[/b]
   g               Change repository
