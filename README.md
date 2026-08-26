@@ -70,6 +70,14 @@ uv run ruff check .
 uv run pytest
 ```
 
+The version lives only in `pyproject.toml`; `ghi.__version__` reads it back from the
+installed package metadata. Bump a release with uv, which rewrites `pyproject.toml` and
+`uv.lock` in one step:
+
+```console
+uv version --bump patch   # or minor, major
+```
+
 ## License
 
 MIT
