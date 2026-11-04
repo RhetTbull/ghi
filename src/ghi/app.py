@@ -66,7 +66,7 @@ class IssueApp(App[None]):
         Binding("x", "toggle_state", "Close/reopen"),
         Binding("s", "cycle_state", "State"),
         Binding("r", "refresh", "Refresh"),
-        Binding("o", "open_browser", "Browser", show=False),
+        Binding("o", "open_browser", "Browser"),
         Binding("g", "change_repo", "Repo", show=False),
         Binding("t", "change_token", "Token", show=False),
         Binding("question_mark", "help", "Help"),
