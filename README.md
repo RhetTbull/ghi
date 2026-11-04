@@ -23,6 +23,13 @@ uv run ghi owner/repo
 uv run ghi https://github.com/owner/repo
 ```
 
+To open an issue on GitHub in your default browser without starting the TUI:
+
+```console
+uv run ghi --open 42
+uv run ghi owner/repo -o 42
+```
+
 The token may also be passed with `--token` or entered at runtime with `t`. Runtime tokens
 are held in memory only. For private repositories and write actions, use a fine-grained
 personal access token with repository **Issues: read and write** permission. Public issues

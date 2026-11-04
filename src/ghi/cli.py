@@ -2,11 +2,27 @@ from __future__ import annotations
 
 import argparse
 import os
+import webbrowser
 from pathlib import Path
 
 from ghi import __version__
 from ghi.app import IssueApp
 from ghi.repository import RepositoryError, discover_repo, normalize_repo
+
+
+def issue_number(value: str) -> int:
+    """Parse an issue number given as 123 or #123."""
+    try:
+        number = int(value.strip().removeprefix("#"))
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"invalid issue number: {value!r}") from None
+    if number < 1:
+        raise argparse.ArgumentTypeError(f"invalid issue number: {value!r}")
+    return number
+
+
+def issue_url(repo: str, number: int) -> str:
+    return f"https://github.com/{repo}/issues/{number}"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -22,6 +38,13 @@ def build_parser() -> argparse.ArgumentParser:
         "--token",
         help="GitHub access token (prefer GITHUB_ISSUE_ACCESS_TOKEN to avoid shell history)",
     )
+    parser.add_argument(
+        "-o",
+        "--open",
+        metavar="ISSUE",
+        type=issue_number,
+        help="open issue ISSUE in the default web browser instead of starting the TUI",
+    )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     return parser
 
@@ -36,5 +59,10 @@ def main(argv: list[str] | None = None) -> None:
         repo = normalize_repo(raw_repo)
     except RepositoryError as error:
         parser.error(str(error))
+    if args.open is not None:
+        url = issue_url(repo, args.open)
+        if not webbrowser.open(url):
+            parser.exit(1, f"ghi: could not open a browser; visit {url}\n")
+        return
     token = args.token if args.token is not None else os.getenv("GITHUB_ISSUE_ACCESS_TOKEN", "")
     IssueApp(repo, token).run()
