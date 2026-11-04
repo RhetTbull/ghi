@@ -1,6 +1,6 @@
 [project]
 name = "ghi"
-version = "0.2.2"
+version = "0.2.3"
 description = "A fast, lightweight GitHub issue TUI"
 readme = "README.md"
 license = "MIT"
